@@ -4636,7 +4636,7 @@ GameObject:
   - component: {fileID: 606031215}
   - component: {fileID: 606031214}
   m_Layer: 0
-  m_Name: DeadTilemap
+  m_Name: BoundaryTilemap
   m_TagString: Respawn
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4687,7 +4687,7 @@ TilemapCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -6056,7 +6056,7 @@ GameObject:
   - component: {fileID: 1808619943}
   - component: {fileID: 1808619942}
   - component: {fileID: 1808619941}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Enemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -6093,7 +6093,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class PlayerController : MonoBehaviour
     public Sprite[] spriteLeft;
     public Sprite[] spriteRight;
     public float frameTime = 0.15f;
+    public int maxLives = 3;     // 최대 목숨
 
     private Rigidbody2D rb;
     private SpriteRenderer sr;
@@ -17,6 +19,12 @@ public class PlayerController : MonoBehaviour
     private Sprite[] currentSprites;
     private int frameIndex = 0;
     private float timer = 0f;
+    private int currentLives;    // 현재 목숨
+
+    void Start()
+    {
+        currentLives = maxLives; // 게임 시작 시 목숨 3개 부여
+    }
 
     private void Awake()
     {
@@ -90,5 +98,32 @@ public class PlayerController : MonoBehaviour
         sr.sprite = currentSprites[frameIndex];
     }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            TakeDamage();
+        }
+    }
 
+    // 2. Is Trigger가 켜져 있을 때 작동
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Enemy"))
+        {
+            TakeDamage();
+        }
+    }
+
+    void TakeDamage()
+    {
+        currentLives--;
+        Debug.Log("남은 목숨: " + currentLives);
+
+        if (currentLives <= 0)
+        {
+            Debug.Log("게임 오버! 씬을 재시작합니다.");
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+    }
 }
