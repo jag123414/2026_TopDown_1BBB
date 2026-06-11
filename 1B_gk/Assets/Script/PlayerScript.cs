@@ -26,6 +26,11 @@ public class PlayerController : MonoBehaviour
     public float invincibleTime = 1.0f; // 무적 시간 (1초)
     private bool isInvincible = false;  // 현재 무적 상태인지 여부
 
+    // ==========================================
+    // 💡 [연동 추가] 하트 UI를 깎기 위해 LifeManager를 받아옵니다.
+    // ==========================================
+    public LifeManager lifeManager;
+
     void Start()
     {
         currentLives = maxLives; // 게임 시작 시 목숨 3개 부여
@@ -143,10 +148,19 @@ public class PlayerController : MonoBehaviour
         currentLives--;
         Debug.Log("남은 목숨: " + currentLives);
 
+        // ==========================================
+        // 💡 [연동 추가] 목숨이 깎일 때 하트 UI도 함께 한 개 숨깁니다.
+        // ==========================================
+        if (lifeManager != null)
+        {
+            lifeManager.TakeDamage();
+        }
+
         if (currentLives <= 0)
         {
-            Debug.Log("게임 오버! 씬을 재시작합니다.");
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            // [수정된 부분] 플레이어 스크립트 안에서 스테이지를 재시작하던 코드를 제거했습니다.
+            // 이제 목숨 관리와 씬 이동은 LifeManager가 전담하여 처리합니다.
+            Debug.Log("게임 오버! LifeManager에서 시작 씬으로 이동을 처리합니다.");
         }
         else
         {

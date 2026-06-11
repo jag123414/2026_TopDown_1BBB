@@ -13,7 +13,7 @@ public class EnemyTraceController : MonoBehaviour
     private void Start()
     {
         // 하이어라키의 "player" 오브젝트를 찾아옵니다.
-        GameObject playerObj = GameObject.Find("player");
+        GameObject playerObj = GameObject.Find("Player");
         if (playerObj != null)
         {
             player = playerObj.transform;
@@ -41,7 +41,7 @@ public class EnemyTraceController : MonoBehaviour
     // 물리적인 충돌(Collider2D가 Is Trigger Off 일 때)
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("player"))
+        if (collision.gameObject.CompareTag("Player"))
         {
             StartCoroutine(StopRoutine());
         }
@@ -50,7 +50,7 @@ public class EnemyTraceController : MonoBehaviour
     // 트리거 충돌(Collider2D가 Is Trigger On 일 때)
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("player"))
+        if (collision.CompareTag("Player"))
         {
             StartCoroutine(StopRoutine());
         }

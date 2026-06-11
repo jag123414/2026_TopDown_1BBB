@@ -9,6 +9,17 @@ public class SurvivalTimeDisplay : MonoBehaviour
     // 생존 시간을 누적해서 저장할 변수입니다. (초 단위)
     private float survivalTime = 0f;
 
+    // ─────────────────────────────────────────────────────────
+    // [새로 추가된 부분] 시작할 때 저장된 이어하기 시간이 있다면 불러옵니다.
+    void Start()
+    {
+        if (PlayerPrefs.HasKey("HasSavedData"))
+        {
+            survivalTime = PlayerPrefs.GetFloat("SavedTime", 0f);
+        }
+    }
+    // ─────────────────────────────────────────────────────────
+
     void Update()
     {
         // 1. 게임이 실행되는 동안 매 프레임마다 흐른 시간(초)을 더해줍니다.
@@ -23,4 +34,12 @@ public class SurvivalTimeDisplay : MonoBehaviour
         // "D2"는 숫자가 한 자리일 때 앞에 0을 붙여 무조건 2자리로 만드는 마법의 명령어입니다.
         timeText.text = string.Format("{0:D2}:{1:D2}", minutes, seconds);
     }
+
+    // ─────────────────────────────────────────────────────────
+    // [새로 추가된 부분] LifeManager에서 이 값을 안전하게 꺼내 갈 수 있도록 해주는 기능입니다.
+    public float GetSurvivalTime()
+    {
+        return survivalTime;
+    }
+    // ─────────────────────────────────────────────────────────
 }
