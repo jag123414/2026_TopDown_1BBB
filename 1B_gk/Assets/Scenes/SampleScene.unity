@@ -6856,6 +6856,8 @@ MonoBehaviour:
   - {fileID: -7489089114631842765, guid: 86b68f840b0d819488871fb6e6acd3af, type: 3}
   frameTime: 0.15
   maxLives: 3
+  playerHP: 0
+  playerAttack: 0
   invincibleTime: 1
   lifeManager: {fileID: 2079001523}
 --- !u!4 &1835848039

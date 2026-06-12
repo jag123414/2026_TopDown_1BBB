@@ -5,13 +5,17 @@ using System.Collections; // 💡 코루틴(IEnumerator) 사용을 위해 추가
 
 public class PlayerController : MonoBehaviour
 {
-    public float moveSpeed = 5f;
+    public float moveSpeed = 1f;
     public Sprite[] spriteUp;
     public Sprite[] spriteDown;
     public Sprite[] spriteLeft;
     public Sprite[] spriteRight;
     public float frameTime = 0.15f;
     public int maxLives = 3;     // 최대 목숨
+
+    // ⭐⭐⭐ [데이터 매니저 연동 변수] ⭐⭐⭐
+    public int playerHP = 0;
+    public int playerAttack = 0;
 
     private Rigidbody2D rb;
     private SpriteRenderer sr;
@@ -34,6 +38,18 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         currentLives = maxLives; // 게임 시작 시 목숨 3개 부여
+
+        // ⭐⭐⭐ [데이터 매니저에서 튜토리얼 정보 가져오기 및 체크] ⭐⭐⭐
+        if (GameDataManager.Instance.isTutorialFinished == 0)
+        {
+            // 튜토리얼 안 했을 경우 튜토리얼 오픈
+            Debug.Log("튜토리얼 오픈!");
+            GameDataManager.Instance.isTutorialFinished = 1;
+        }
+        else
+        {
+            // 튜토리얼 했을 경우 아무것도 안 함
+        }
     }
 
     private void Awake()
@@ -42,7 +58,14 @@ public class PlayerController : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
 
         currentSprites = spriteDown;
+
+        // 🛠️ [에러 수정 완료] 배열인 currentSprites를 직접 대입하지 않고, 0번째 칸의 Sprite를 명확히 지정했습니다.
         sr.sprite = currentSprites[0];
+
+        // ⭐⭐⭐ [데이터 매니저에서 세이브 데이터 안전하게 불러오기] ⭐⭐⭐
+        moveSpeed = GameDataManager.Instance.GetPlayerMoveSpeed();
+        playerHP = GameDataManager.Instance.GetPlayerHp();
+        playerAttack = GameDataManager.Instance.GetPlayerAttack();
     }
 
     public void OnMove(InputValue value)
@@ -158,9 +181,10 @@ public class PlayerController : MonoBehaviour
 
         if (currentLives <= 0)
         {
-            // [수정된 부분] 플레이어 스크립트 안에서 스테이지를 재시작하던 코드를 제거했습니다.
-            // 이제 목숨 관리와 씬 이동은 LifeManager가 전담하여 처리합니다.
-            Debug.Log("게임 오버! LifeManager에서 시작 씬으로 이동을 처리합니다.");
+            // ⭐⭐⭐ [게임 오버 연동 부분 수정] ⭐⭐⭐
+            // 목숨이 0개가 되면 슬라이드 내용대로 싱글톤 GameManager를 깨워 게임 오버를 처리합니다.
+            Debug.Log("게임 오버! GameManager를 호출하여 데이터를 저장하고 타이틀로 이동합니다.");
+            GameManager.Instance.GameOver();
         }
         else
         {
