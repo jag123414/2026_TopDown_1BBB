@@ -9,16 +9,19 @@ public class SurvivalTimeDisplay : MonoBehaviour
     // 생존 시간을 누적해서 저장할 변수입니다. (초 단위)
     private float survivalTime = 0f;
 
-    // ─────────────────────────────────────────────────────────
-    // [새로 추가된 부분] 시작할 때 저장된 이어하기 시간이 있다면 불러옵니다.
+    // 게임 씬이 시작될 때 무조건 시간을 0으로 초기화합니다.
     void Start()
     {
+        survivalTime = 0f;
+
+        // (선택 사항) 만약 이전에 저장된 데이터가 남아있어서 방해된다면 완전히 삭제합니다.
         if (PlayerPrefs.HasKey("HasSavedData"))
         {
-            survivalTime = PlayerPrefs.GetFloat("SavedTime", 0f);
+            PlayerPrefs.DeleteKey("HasSavedData");
+            PlayerPrefs.DeleteKey("SavedTime");
+            PlayerPrefs.Save();
         }
     }
-    // ─────────────────────────────────────────────────────────
 
     void Update()
     {
@@ -26,20 +29,16 @@ public class SurvivalTimeDisplay : MonoBehaviour
         survivalTime += Time.deltaTime;
 
         // 2. 누적된 전체 초를 '분'과 '초'로 쪼갭니다.
-        // float 타입을 int(정수) 타입으로 바꾸면 소수점이 깔끔하게 버려집니다.
         int minutes = (int)survivalTime / 60; // 전체 시간을 60으로 나눈 몫 = 분
         int seconds = (int)survivalTime % 60; // 60으로 나누고 남은 나머지 = 초
 
         // 3. 텍스트 UI에 "00:00" 형태로 글자를 만들어 넣어줍니다.
-        // "D2"는 숫자가 한 자리일 때 앞에 0을 붙여 무조건 2자리로 만드는 마법의 명령어입니다.
         timeText.text = string.Format("{0:D2}:{1:D2}", minutes, seconds);
     }
 
-    // ─────────────────────────────────────────────────────────
-    // [새로 추가된 부분] LifeManager에서 이 값을 안전하게 꺼내 갈 수 있도록 해주는 기능입니다.
+    // LifeManager에서 이 값을 안전하게 꺼내 갈 수 있도록 해주는 기능입니다.
     public float GetSurvivalTime()
     {
         return survivalTime;
     }
-    // ─────────────────────────────────────────────────────────
 }
