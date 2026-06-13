@@ -5,7 +5,7 @@ using System.Collections; // 💡 코루틴(IEnumerator) 사용을 위해 추가
 
 public class PlayerController : MonoBehaviour
 {
-    public float moveSpeed = 1f;
+    public float moveSpeed = 5f;
     public Sprite[] spriteUp;
     public Sprite[] spriteDown;
     public Sprite[] spriteLeft;
@@ -16,6 +16,15 @@ public class PlayerController : MonoBehaviour
     // ⭐⭐⭐ [데이터 매니저 연동 변수] ⭐⭐⭐
     public int playerHP = 0;
     public int playerAttack = 0;
+
+    // 🏹🏹🏹 [자동 공격 설정을 위한 변수] 🏹🏹🏹
+    [Header("공격 설정")]
+    public GameObject bulletPrefab; // 발사할 화살 프리팹이 들어갈 칸
+    public float fireRate = 1.5f;   // 발사 간격 (1.5초에 한 번)
+    private float fireTimer = 0f;
+
+    // 마지막으로 바라본 방향 각도를 기억합니다. (기본값은 아래 방향)
+    private float lastShootAngle = 180f;
 
     private Rigidbody2D rb;
     private SpriteRenderer sr;
@@ -59,7 +68,7 @@ public class PlayerController : MonoBehaviour
 
         currentSprites = spriteDown;
 
-        // 🛠️ [에러 수정 완료] 배열인 currentSprites를 직접 대입하지 않고, 0번째 칸의 Sprite를 명확히 지정했습니다.
+        // 🛠️ [에러 완벽 수정 ⭐] 뒤에 [0]을 정확히 붙여서 단일 스프라이트 이미지로 대입해 줍니다.
         sr.sprite = currentSprites[0];
 
         // ⭐⭐⭐ [데이터 매니저에서 세이브 데이터 안전하게 불러오기] ⭐⭐⭐
@@ -89,11 +98,22 @@ public class PlayerController : MonoBehaviour
                 else
                     ChangeSprites(spriteDown);
             }
+
+            // 움직이고 있을 때 마지막 발사 각도를 실시간으로 업데이트해 둡니다.
+            lastShootAngle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg - 90f;
         }
     }
 
     private void Update()
     {
+        // 🏹🏹🏹 [자동 공격 타이머 계산 코드] 🏹🏹🏹
+        fireTimer += Time.deltaTime;
+        if (fireTimer >= fireRate)
+        {
+            fireTimer = 0f;
+            Shoot(); // 시간 되면 화살 발사!
+        }
+
         if (input.sqrMagnitude <= 0.01f)
         {
             frameIndex = 0;
@@ -113,6 +133,18 @@ public class PlayerController : MonoBehaviour
 
             sr.sprite = currentSprites[frameIndex];
         }
+    }
+
+    // 🏹🏹🏹 [실제 화살을 만들어 발사하는 함수] 🏹🏹🏹
+    void Shoot()
+    {
+        if (bulletPrefab == null) return;
+
+        // 플레이어 위치에 화살 에셋 복사 생성
+        GameObject bullet = Instantiate(bulletPrefab, transform.position, transform.rotation);
+
+        // 가만히 멈춰있더라도 lastShootAngle에 저장된 방향으로 화살을 회전시킵니다.
+        bullet.transform.rotation = Quaternion.AngleAxis(lastShootAngle, Vector3.forward);
     }
 
     private void FixedUpdate()
@@ -182,7 +214,7 @@ public class PlayerController : MonoBehaviour
         if (currentLives <= 0)
         {
             // ⭐⭐⭐ [게임 오버 연동 부분 수정] ⭐⭐⭐
-            // 목숨이 0개가 되면 슬라이드 내용대로 싱글톤 GameManager를 깨워 게임 오버를 처리합니다.
+            // 목숨이 0개가 되면 싱글톤 GameManager를 깨워 게임 오버를 처리합니다.
             Debug.Log("게임 오버! GameManager를 호출하여 데이터를 저장하고 타이틀로 이동합니다.");
             GameManager.Instance.GameOver();
         }

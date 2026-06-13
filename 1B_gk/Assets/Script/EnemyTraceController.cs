@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
 
@@ -7,12 +7,12 @@ public class EnemyTraceController : MonoBehaviour
     public float moveSpeed = 0.5f;
     public float raycastDistance = 0.6f;
 
-    private bool isStopped = false;   // 3ÃÊ°£ ¸ØÃã »óÅÂÀÎÁö Ã¼Å©ÇÏ´Â º¯¼ö
+    private bool isStopped = false;   // 3ì´ˆê°„ ë©ˆì¶¤ ìƒíƒœì¸ì§€ ì²´í¬í•˜ëŠ” ë³€ìˆ˜
     private Transform player;
 
     private void Start()
     {
-        // ÇÏÀÌ¾î¶óÅ°ÀÇ "player" ¿ÀºêÁ§Æ®¸¦ Ã£¾Æ¿É´Ï´Ù.
+        // í•˜ì´ì–´ë¼í‚¤ì˜ "player" ì˜¤ë¸Œì íŠ¸ë¥¼ ì°¾ì•„ì˜µë‹ˆë‹¤.
         GameObject playerObj = GameObject.Find("Player");
         if (playerObj != null)
         {
@@ -24,21 +24,21 @@ public class EnemyTraceController : MonoBehaviour
     {
         if (player == null) return;
 
-        // ¸ØÃã »óÅÂ¶ó¸é ¾Æ·¡ÀÇ ÀÌµ¿ ·ÎÁ÷À» ½ÇÇàÇÏÁö ¾Ê°í ¸®ÅÏÇÕ´Ï´Ù.
+        // ë©ˆì¶¤ ìƒíƒœë¼ë©´ ì•„ë˜ì˜ ì´ë™ ë¡œì§ì„ ì‹¤í–‰í•˜ì§€ ì•Šê³  ë¦¬í„´í•©ë‹ˆë‹¤.
         if (isStopped) return;
 
-        // ÇÃ·¹ÀÌ¾î¿ÍÀÇ ¹æÇâ °è»ê
+        // í”Œë ˆì´ì–´ì™€ì˜ ë°©í–¥ ê³„ì‚°
         Vector2 direction = player.position - transform.position;
         Vector2 directionNormalized = direction.normalized;
 
-        // µğ¹ö±×¿ë ¼± Ãâ·Â
+        // ë””ë²„ê·¸ìš© ì„  ì¶œë ¥
         Debug.DrawRay(transform.position, directionNormalized * raycastDistance, Color.red);
 
-        // ÇÃ·¹ÀÌ¾î ¹æÇâÀ¸·Î ÃßÀû ÀÌµ¿
+        // í”Œë ˆì´ì–´ ë°©í–¥ìœ¼ë¡œ ì¶”ì  ì´ë™
         transform.Translate(directionNormalized * moveSpeed * Time.deltaTime);
     }
 
-    // ¹°¸®ÀûÀÎ Ãæµ¹(Collider2D°¡ Is Trigger Off ÀÏ ¶§)
+    // ë¬¼ë¦¬ì ì¸ ì¶©ëŒ(Collider2Dê°€ Is Trigger Off ì¼ ë•Œ)
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
@@ -47,7 +47,7 @@ public class EnemyTraceController : MonoBehaviour
         }
     }
 
-    // Æ®¸®°Å Ãæµ¹(Collider2D°¡ Is Trigger On ÀÏ ¶§)
+    // íŠ¸ë¦¬ê±° ì¶©ëŒ(Collider2Dê°€ Is Trigger On ì¼ ë•Œ)
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
@@ -56,11 +56,33 @@ public class EnemyTraceController : MonoBehaviour
         }
     }
 
-    // 3ÃÊ µ¿¾È ÀÌµ¿À» Á¤Áö½ÃÅ°´Â ÄÚ·çÆ¾ ÇÔ¼ö
+    // 3ì´ˆ ë™ì•ˆ ì´ë™ì„ ì •ì§€ì‹œí‚¤ëŠ” ì½”ë£¨í‹´ í•¨ìˆ˜
     IEnumerator StopRoutine()
     {
         isStopped = true;
         yield return new WaitForSeconds(3.0f);
         isStopped = false;
+    }
+
+    void Die()
+    {
+        // â­â­â­ [ì¶”ê°€] ì£½ìœ¼ë©´ì„œ ë°ì´í„° ë§¤ë‹ˆì €ì— ê³¨ë“œì™€ ì²˜ì¹˜ ìˆ˜ ëˆ„ì  ëª…ë ¹ â­â­â­
+        GameDataManager.Instance.AddKillCount();   // ì²˜ì¹˜ ìˆ˜ +1
+        GameDataManager.Instance.AddGold(100);     // í•œ ë§ˆë¦¬ë‹¹ 100ê³¨ë“œ ì§€ê¸‰ (ì›í•˜ëŠ” ì•¡ìˆ˜ë¡œ ë³€ê²½ ê°€ëŠ¥)
+
+        Destroy(gameObject); // ê¸°ì¡´ì— ìˆë˜ ëª¬ìŠ¤í„° íŒŒê´´ ì½”ë“œ
+    }
+
+
+    // ğŸ› ï¸ ëª¬ìŠ¤í„° ìŠ¤í¬ë¦½íŠ¸ ë‚´ë¶€ì— ì¶”ê°€í•  ì½”ë“œ
+    public int enemyHP = 1; // ëª¬ìŠ¤í„° ì²´ë ¥
+
+    public void TakeDamage(int amount)
+    {
+        enemyHP -= amount;
+        if (enemyHP <= 0)
+        {
+            Die();
+        }
     }
 }

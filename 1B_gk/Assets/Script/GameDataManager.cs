@@ -111,6 +111,17 @@ public class GameDataManager : MonoBehaviour
         Debug.Log("PlayerPrefs 삭제 완료");
     }
 
+    public void AddGold(int amount)
+    {
+        saveData.totalGold += amount;
+        Debug.Log("골드 획득! 현재 총 골드: " + saveData.totalGold);
+    }
+
+    public void AddKillCount()
+    {
+        saveData.totalKillCount++;
+        Debug.Log("몬스터 처치! 현재 총 처치 수: " + saveData.totalKillCount);
+    }
 
 
 }
