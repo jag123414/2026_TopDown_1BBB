@@ -39,4 +39,19 @@ public class TitleManager : MonoBehaviour
         if (isHardMode == 1) hardModeText.text = "HARD MODE: ON";
         else hardModeText.text = "HARD MODE: OFF";
     }
+
+    // ⭐⭐⭐ [최종 완료 추가] 게임을 완전히 종료하고 나가는 함수 ⭐⭐⭐
+    public void QuitGame()
+    {
+        Debug.Log("게임 종료 버튼 클릭됨!");
+
+        #if UNITY_EDITOR
+        // 유니티 에디터 창에서 테스트 중일 때 작동하는 종료 코드
+        UnityEditor.EditorApplication.isPlaying = false;
+        #else
+        // 실제 게임을 빌드(.exe 설치 파일 등)해서 켰을 때 컴퓨터에서 작동하는 종료 코드
+        Application.Quit();
+        #endif
+    }
+
 }
